@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore; // Ensure this namespace is included for EF Core SQLite support  
+﻿using Microsoft.EntityFrameworkCore;
 using Portfolio.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-        
+
 // EF Core with SQLite  
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -25,5 +25,8 @@ app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
 
+// ✅ Add this to respond at "/"
+app.MapGet("/", () => "✅ Portfolio API is running!");
+
+app.Run();
