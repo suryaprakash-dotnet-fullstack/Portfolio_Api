@@ -30,5 +30,23 @@ app.MapControllers();
 
 // ✅ Add this to respond at "/"
 app.MapGet("/", () => "✅ Portfolio API is running!");
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate(); // Create DB if it doesn't exist
+
+    if (!db.Contacts.Any())
+    {
+        db.Contacts.Add(new Portfolio.Models.Contact
+        {
+            Phone = "9524808329",
+            Email = "rsuryaprakash713@gmail.com",
+            Location = "Chennai",
+            LinkedInUrl = "https://www.linkedin.com/in/suryaprakash-r"
+        });
+
+        db.SaveChanges();
+    }
+}
 
 app.Run();
