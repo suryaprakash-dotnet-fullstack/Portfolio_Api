@@ -8,18 +8,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// EF Core with SQLite  
+// ✅ PostgreSQL with EF Core  
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
 // Middleware  
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -28,12 +23,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-// ✅ Add this to respond at "/"
+// ✅ Health check at "/"
 app.MapGet("/", () => "✅ Portfolio API is running!");
+
+// ✅ Apply migrations and seed contact
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate(); // Create DB if it doesn't exist
+    db.Database.Migrate();
 
     if (!db.Contacts.Any())
     {
